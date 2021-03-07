@@ -31,10 +31,6 @@ app=$YNH_APP_INSTANCE_NAME
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 
-ynh_print_info --message="aaaa"
-ynh_print_info --message="$domain"
-ynh_print_info --message="$final_path"
-
 #=================================================
 # DECLARE DATA AND CONF FILES TO BACKUP
 #=================================================

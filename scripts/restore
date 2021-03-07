@@ -24,7 +24,7 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --time --weight=1
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -37,7 +37,7 @@ port=$(ynh_app_setting_get --app=$app --key=port)
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
 #=================================================
-ynh_script_progression --message="Validating restoration parameters..." --time --weight=1
+ynh_script_progression --message="Validating restoration parameters..." --weight=2
 
 ynh_webpath_available --domain=$domain --path_url=$path_url \
 	|| ynh_die --message="Path not available: ${domain}${path_url}"
@@ -55,14 +55,14 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Restoring the app main directory..." --time --weight=1
+ynh_script_progression --message="Restoring the app main directory..." --weight=10
 
 ynh_restore_file --origin_path="$final_path"
 
 #=================================================
 # RESTORE FAIL2BAN CONFIGURATION
 #=================================================
-ynh_script_progression --message="Restoring the Fail2Ban configuration..." --time --weight=1
+ynh_script_progression --message="Restoring the Fail2Ban configuration..." --weight=2
 
 ynh_restore_file "/etc/fail2ban/jail.d/$app.conf"
 ynh_restore_file "/etc/fail2ban/filter.d/$app.conf"
@@ -73,7 +73,7 @@ ynh_systemd_action --action=restart --service_name=fail2ban
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Reinstalling dependencies..." --time --weight=1
+ynh_script_progression --message="Reinstalling dependencies..." --weight=6
 
 # Define and install dependencies
 ynh_install_app_dependencies $pkg_dependencies
@@ -81,7 +81,7 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 # REINSTALL COUCHDB
 #=================================================
-ynh_script_progression --message="Reinstalling couchdb..." --time --weight=50
+ynh_script_progression --message="Reinstalling couchdb..." --weight=40
 
 COUCHDB_PASSWORD=$password
 echo "couchdb couchdb/mode select standalone
@@ -103,7 +103,7 @@ ynh_install_extra_app_dependencies --repo="https://apache.bintray.com/couchdb-de
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
+ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
 yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/$app/$app.log" --needs_exposed_ports "$port"
 
@@ -118,7 +118,7 @@ ynh_restore_file --origin_path="/etc/logrotate.d/$app"
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --time --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -126,4 +126,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Restoration completed for $app" --time --last
+ynh_script_progression --message="Restoration completed for $app" --last
