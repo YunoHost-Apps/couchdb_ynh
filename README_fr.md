@@ -1,4 +1,4 @@
-# App exemple pour YunoHost
+# Couchdb pour YunoHost
 
 [![Niveau d'intégration](https://dash.yunohost.org/integration/couchdb.svg)](https://dash.yunohost.org/appci/app/couchdb) ![](https://ci-apps.yunohost.org/ci/badges/couchdb.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/couchdb.maintain.svg)  
 [![Installer couchdb avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=couchdb)
@@ -49,6 +49,8 @@ Couchdb a sa propre gestion d'utilisateurs, donc LDAP n'est pas supporté.
 ## Limitations
 
 Par défaut, ce paquet install couchdb comme nœud simple. Si vous souhaitez permettre des installations plus avancées les contributions sont bienvenues :)
+
+Il semble qu'il y'ai un conflit entre le cookie du SSO yunohost et celui d'autentification à couchdb, dont le résultat est que couchdb n'est pas accessible pour les utilisateurs s'ils sont loggé dans le SSO. La façon la plus simple d'éviter ce problème est d'installer couchdb sur un domaine différent que le domaine principale de yunohost.
 
 
 ## Liens

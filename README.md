@@ -1,4 +1,3 @@
-
 # Couchdb for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/couchdb.svg)](https://dash.yunohost.org/appci/app/couchdb) ![](https://ci-apps.yunohost.org/ci/badges/couchdb.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/couchdb.maintain.svg)  
@@ -53,6 +52,8 @@ Couchdb has it's own users management system, so LDAP is not supported.
 ## Limitations
 
 By default this package installs couchdb as single node, if you need a different setup, please contribute with pull requests to improve the package :)
+
+It seems that there are some conflicts between yunohost SSO cookies and couchdb authentication cookies, this results in users not being able to access couchdb if they are logged in the SSO. To avoid having this issue, it is recommended to install couchdb on a different domain than the main yunohost one.
 
 
 ## Links
