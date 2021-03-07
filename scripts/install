@@ -1,0 +1,172 @@
+#!/bin/bash
+
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
+
+ynh_clean_setup () {
+	### Remove this function if there's nothing to clean before calling the remove script.
+	true
+}
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+app=$YNH_APP_INSTANCE_NAME
+
+domain=$YNH_APP_ARG_DOMAIN
+path_url=$YNH_APP_ARG_PATH
+is_public=$YNH_APP_ARG_IS_PUBLIC
+password=$YNH_APP_ARG_PASSWORD
+
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
+ynh_script_progression --message="Validating installation parameters..." --weight=1
+
+final_path=/opt/couchdb
+test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
+
+# Register (book) web path
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
+
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+ynh_script_progression --message="Storing installation settings..." --weight=1
+
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+ynh_app_setting_set --app=$app --key=password --value=$password
+
+#=================================================
+# STANDARD MODIFICATIONS
+#=================================================
+# FIND AND OPEN A PORT
+#=================================================
+ynh_script_progression --message="Finding an available port..." --weight=2
+
+# Find an available port
+port="5984"
+# NOTE: ideally, it would be nice to make sure that port 5984 is not taken, but if doing so, something should be done on couchdb install to customize the port it uses
+# port=$(ynh_find_port --port=5984)
+ynh_app_setting_set --app=$app --key=port --value=$port
+
+# Open the port
+ynh_script_progression --message="Configuring firewall..." --weight=1
+ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $port
+
+#=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Installing dependencies..." --weight=8
+
+ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring NGINX web server..." --weight=3
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
+
+#=================================================
+# SPECIFIC SETUP
+#=================================================
+# INSTALL COUCHDB
+#=================================================
+ynh_script_progression --message="Installing couchdb..." --weight=60
+
+COUCHDB_PASSWORD=$password
+echo "couchdb couchdb/mode select standalone
+couchdb couchdb/mode seen true
+couchdb couchdb/bindaddress string 127.0.0.1
+couchdb couchdb/bindaddress seen true
+couchdb couchdb/adminpass password ${COUCHDB_PASSWORD}
+couchdb couchdb/adminpass seen true
+couchdb couchdb/adminpass_again password ${COUCHDB_PASSWORD}
+couchdb couchdb/adminpass_again seen true" | debconf-set-selections
+DEBIAN_FRONTEND=noninteractive # apt-get install -y --force-yes couchdb
+
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8756C4F765C9AC3CB6B85D62379CE192D401AB61
+
+# ynh_add_app_dependencies --package="ca-certificates" # done before, when installing dependencies
+ynh_install_extra_app_dependencies --repo="https://apache.bintray.com/couchdb-deb buster main" --package="couchdb"
+# ynh_install_extra_app_dependencies --repo="https://apache.bintray.com/couchdb-deb buster main" --package="couchdb" --key="https://apache.bintray.com/couchdb-deb/dists/buster/Release.gpg"
+
+#=================================================
+# MODIFY A CONFIG FILE, AND STORE IT'S CHECKSUM
+#=================================================
+ynh_script_progression --message="Customizing couchdb config..." --weight=2
+
+# customize a bit the couch config
+ynh_add_config --template="../conf/couch_ynh.ini" --destination="$final_path/etc/local.d/couch_ynh.ini"
+
+# Calculate and store the config file checksum into the app settings
+ynh_store_file_checksum --file="$final_path/etc/local.d/couch_ynh.ini"
+
+#=================================================
+# SETUP LOGROTATE
+#=================================================
+ynh_script_progression --message="Configuring log rotation..." --weight=2
+
+# Use logrotate to manage application logfile(s)
+ynh_use_logrotate
+
+#=================================================
+# INTEGRATE SERVICE IN YUNOHOST
+#=================================================
+ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
+
+yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/$app/$app.log" --needs_exposed_ports "$port"
+
+#=================================================
+# SETUP FAIL2BAN
+#=================================================
+ynh_script_progression --message="Configuring Fail2Ban..." --weight=3
+
+# Create a dedicated Fail2Ban config
+ynh_add_fail2ban_config --logpath="/var/log/couchdb/couchdb.log" --failregex="[warning] .*couch_httpd_auth: Authentication failed for user .+ from <HOST>" --max_retry=5
+
+#=================================================
+# SETUP SSOWAT
+#=================================================
+ynh_script_progression --message="Configuring permissions..." --weight=3
+
+# Setup that clicking SSO tile opens fauxton UI
+ynh_permission_url --permission="main" --url="/_utils/index.html" --add_url="/"
+
+# Make app public if necessary
+if [ $is_public -eq 1 ]
+then
+	# Everyone can access the app.
+	# The "main" permission is automatically created before the install script.
+	ynh_permission_update --permission="main" --add="visitors"
+fi
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading NGINX web server..." --weight=3
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Installation of $app completed" --last
