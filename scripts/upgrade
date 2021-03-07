@@ -12,7 +12,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --time --weight=1
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -36,7 +36,7 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_script_progression --message="Ensuring downward compatibility..." --time --weight=1
+ynh_script_progression --message="Ensuring downward compatibility..." --weight=4
 
 ### If nobody installed your app before 4.1,
 ### then you may safely remove these lines
@@ -61,7 +61,7 @@ fi
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --time --weight=1
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=15
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -75,17 +75,17 @@ ynh_abort_if_errors
 #=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
-# # NGINX CONFIGURATION
-# #=================================================
-# ynh_script_progression --message="Upgrading NGINX web server configuration..." --time --weight=1
-#
-# # Create a dedicated NGINX config
-# ynh_add_nginx_config
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=2
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
 
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Upgrading dependencies..." --time --weight=1
+ynh_script_progression --message="Upgrading dependencies..." --weight=15
 
 ynh_install_app_dependencies $pkg_dependencies couchdb
 
@@ -105,7 +105,7 @@ ynh_store_file_checksum --file="$final_path/etc/local.d/couch_ynh.ini"
 #=================================================
 # SETUP LOGROTATE
 #=================================================
-ynh_script_progression --message="Upgrading logrotate configuration..." --time --weight=1
+ynh_script_progression --message="Upgrading logrotate configuration..." --weight=1
 
 # Use logrotate to manage app-specific logfile(s)
 ynh_use_logrotate --non-append
@@ -113,14 +113,14 @@ ynh_use_logrotate --non-append
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
+ynh_script_progression --message="Integrating service in YunoHost..." --weight=2
 
 yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/$app/$app.log" --needs_exposed_ports "$port"
 
 #=================================================
 # UPGRADE FAIL2BAN
 #=================================================
-ynh_script_progression --message="Reconfiguring Fail2Ban..." --time --weight=1
+ynh_script_progression --message="Reconfiguring Fail2Ban..." --weight=3
 
 # Create a dedicated Fail2Ban config
 ynh_add_fail2ban_config --logpath="/var/log/couchdb/couchdb.log" --failregex="[warning] .*couch_httpd_auth: Authentication failed for user .+ from <HOST>" --max_retry=5
@@ -128,7 +128,7 @@ ynh_add_fail2ban_config --logpath="/var/log/couchdb/couchdb.log" --failregex="[w
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --time --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -136,4 +136,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed" --time --last
+ynh_script_progression --message="Upgrade of $app completed" --last
