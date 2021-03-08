@@ -49,6 +49,10 @@
           "en": "Is it a public application?",
           "fr": "Est-ce une application publique ?"
         },
+        "help": {
+          "en": "If enabled, couchdb will be accessible without yunohost account on your server, but couchdb contains it's own user authentication system.",
+          "fr": "Si cette case est cochée, couchdb sera accessible aux personnes n’ayant pas de compte yunohost sur votre serveur, mais couchdb a son propre système d'autentification des utilisateurs."
+        },
         "default": true
       },
       {
