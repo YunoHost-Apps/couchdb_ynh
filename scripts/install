@@ -147,7 +147,7 @@ ynh_add_fail2ban_config --logpath="/var/log/couchdb/couchdb.log" --failregex="[w
 ynh_script_progression --message="Configuring permissions..." --weight=3
 
 # Setup that clicking SSO tile opens fauxton UI
-ynh_permission_url --permission="main" --url="/_utils/index.html" --add_url="/"
+ynh_permission_url --permission="main" --url="/_utils/index.html" --add_url="/" --auth_header=false
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
