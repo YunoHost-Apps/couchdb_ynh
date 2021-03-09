@@ -8,7 +8,7 @@ about: When creating a bug report, please use the following template to provide 
 1. *Read this whole template first.*
 2. *Determine if you are on the right place:*
    - *If you were performing an action on the app from the webadmin or the CLI (install, update, backup, restore, change_url...), you are on the right place!*
-   - *Otherwise, the issue may be due to dato itself. Refer to [its documentation](https://squeak.eauchat.org/dato) or [repository](https://framagit.org/squeak/dato/issues) for help.*
+   - *Otherwise, the issue may be due to dato itself. Refer to [its documentation](https://docs.couchdb.org/en/stable/index.html) or [repository](https://github.com/apache/couchdb/issues/) for help.*
    - *When in doubt, post here and we will figure it out together.*
 3. *Delete the italic comments as you write over them below, and remove this guide.*
 ---
@@ -31,7 +31,7 @@ about: When creating a bug report, please use the following template to provide 
 
 - *If you performed a command from the CLI, the command itself is enough. For example:*
     ```sh
-    sudo yunohost app install REPLACEBYYOURAPP
+    sudo yunohost app install couchdb
     ```
 - *If you used the webadmin, please perform the equivalent command from the CLI first.*
 - *If the error occurs in your browser, explain what you did:*
