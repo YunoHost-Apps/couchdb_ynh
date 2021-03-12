@@ -60,6 +60,7 @@ Par défaut, ce paquet install couchdb comme nœud simple. Si vous souhaitez per
 
 ---
 
+
 ## Informations pour les développeurs
 
 Merci de faire vos pull request sur la [branche testing](https://github.com/YunoHost-Apps/couchdb_ynh/tree/testing).

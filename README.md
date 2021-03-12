@@ -11,7 +11,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-Couchdb is a database system, where entries are json objects (allowing attachments), and that you can access via simple http requests.
+Couchdb is a database system, where entries are json objects (allowing attachments), and that you can access and synchronize via simple http requests.
 
 As explained in wikipedia:
 > Apache CouchDB is an open-source document-oriented NoSQL database, implemented in Erlang.
