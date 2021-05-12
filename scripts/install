@@ -60,9 +60,7 @@ ynh_app_setting_set --app=$app --key=password --value=$password
 ynh_script_progression --message="Finding an available port..." --weight=2
 
 # Find an available port
-port="5984"
-# NOTE: ideally, it would be nice to make sure that port 5984 is not taken, but if doing so, something should be done on couchdb install to customize the port it uses
-# port=$(ynh_find_port --port=5984)
+port=$(ynh_find_port --port=5984)
 ynh_app_setting_set --app=$app --key=port --value=$port
 
 #=================================================
