@@ -104,6 +104,10 @@ ynh_script_progression --message="Updating a configuration file..."
 
 ynh_add_config --template="../conf/couch_ynh.ini" --destination="$final_path/etc/local.d/couch_ynh.ini"
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:$app "$final_path"
+
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
