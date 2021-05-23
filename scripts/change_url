@@ -66,8 +66,6 @@ fi
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
-
-#=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
 ynh_script_progression --message="Updating NGINX web server configuration..." --weight=2

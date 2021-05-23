@@ -99,6 +99,10 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8756C4F765C9AC3CB6B85D6
 ynh_install_extra_app_dependencies --repo="https://apache.bintray.com/couchdb-deb buster main" --package="couchdb"
 # ynh_install_extra_app_dependencies --repo="https://apache.bintray.com/couchdb-deb buster main" --package="couchdb" --key="https://apache.bintray.com/couchdb-deb/dists/buster/Release.gpg"
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:$app "$final_path"
+
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================

@@ -57,6 +57,8 @@ if ynh_legacy_permissions_exists; then
 	ynh_app_setting_delete --app=$app --key=is_public
 fi
 
+ynh_permission_url --permission="main" --url="/_utils/index.html" --add_url="/" --auth_header=false
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
@@ -101,6 +103,10 @@ ynh_install_extra_app_dependencies --repo="https://apache.bintray.com/couchdb-de
 ynh_script_progression --message="Updating a configuration file..."
 
 ynh_add_config --template="../conf/couch_ynh.ini" --destination="$final_path/etc/local.d/couch_ynh.ini"
+
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:$app "$final_path"
 
 #=================================================
 # GENERIC FINALIZATION
