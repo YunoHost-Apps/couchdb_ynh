@@ -14,7 +14,6 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	### Remove this function if there's nothing to clean before calling the remove script.
 	true
 }
 # Exit if an error occurs during the execution of the script
@@ -24,12 +23,12 @@ ynh_abort_if_errors
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
 
-app=$YNH_APP_INSTANCE_NAME
-
 domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 is_public=$YNH_APP_ARG_IS_PUBLIC
 password=$YNH_APP_ARG_PASSWORD
+
+app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
@@ -60,9 +59,7 @@ ynh_app_setting_set --app=$app --key=password --value=$password
 ynh_script_progression --message="Finding an available port..." --weight=2
 
 # Find an available port
-port="5984"
-# NOTE: ideally, it would be nice to make sure that port 5984 is not taken, but if doing so, something should be done on couchdb install to customize the port it uses
-# port=$(ynh_find_port --port=5984)
+port=$(ynh_find_port --port=5984)
 ynh_app_setting_set --app=$app --key=port --value=$port
 
 #=================================================
@@ -110,6 +107,10 @@ ynh_script_progression --message="Customizing couchdb config..." --weight=2
 
 # customize a bit the couch config
 ynh_add_config --template="../conf/couch_ynh.ini" --destination="$final_path/etc/local.d/couch_ynh.ini"
+
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:$app "$final_path"
 
 #=================================================
 # SETUP LOGROTATE
