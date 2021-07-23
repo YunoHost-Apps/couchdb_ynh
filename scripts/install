@@ -95,10 +95,12 @@ couchdb couchdb/adminpass_again password ${COUCHDB_PASSWORD}
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
 DEBIAN_FRONTEND=noninteractive # apt-get install -y --force-yes couchdb
 
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8756C4F765C9AC3CB6B85D62379CE192D401AB61
+#apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8756C4F765C9AC3CB6B85D62379CE192D401AB61
 
-ynh_install_extra_app_dependencies --repo="https://apache.bintray.com/couchdb-deb buster main" --package="couchdb"
+#ynh_install_extra_app_dependencies --repo="https://apache.bintray.com/couchdb-deb buster main" --package="couchdb"
 # ynh_install_extra_app_dependencies --repo="https://apache.bintray.com/couchdb-deb buster main" --package="couchdb" --key="https://apache.bintray.com/couchdb-deb/dists/buster/Release.gpg"
+
+ynh_install_extra_app_dependencies --repo="https://apache.jfrog.io/artifactory/couchdb-deb/ buster main" --package="couchdb" --key="https://apache.jfrog.io/artifactory/couchdb-deb/dists/buster/Release.gpg"
 
 #=================================================
 # ADD SOME CUSTOM CONFIGURATION TO COUCH
