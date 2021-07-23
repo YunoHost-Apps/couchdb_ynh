@@ -15,7 +15,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-An open-source document-oriented NoSQL database
+Open-source document-oriented NoSQL database
 
 **Shipped version:** 3.1.1~ynh2
 
