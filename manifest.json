@@ -1,13 +1,20 @@
 {
-    "name": "Couchdb",
+    "name": "CouchDB",
     "id": "couchdb",
     "packaging_format": 1,
     "description": {
-        "en": "An open-source document-oriented NoSQL database.",
-        "fr": "Système de gestion de base de données orienté documents."
+        "en": "Open-source document-oriented NoSQL database",
+        "fr": "Système de gestion de base de données orienté documents"
     },
-    "version": "3.1.1~ynh1",
+    "version": "3.1.1~ynh2",
     "url": "https://couchdb.apache.org/",
+    "upstream": {
+        "license": "Apache-2.0",
+        "website": "https://couchdb.apache.org/",
+        "admindoc": "https://docs.couchdb.org/en/stable/",
+        "userdoc": "https://yunohost.org/apps",
+        "code": "https://github.com/apache/couchdb"
+    },
     "license": "Apache-2.0",
     "maintainer": {
         "name": "Squeak",
@@ -38,8 +45,8 @@
                 "name": "is_public",
                 "type": "boolean",
                 "help": {
-                    "en": "If enabled, couchdb will be accessible without yunohost account on your server, but couchdb contains it's own user authentication system.",
-                    "fr": "Si cette case est cochée, couchdb sera accessible aux personnes n’ayant pas de compte yunohost sur votre serveur, mais couchdb a son propre système d'autentification des utilisateurs."
+                    "en": "If enabled, CouchDB will be accessible without YunoHost account on your server, but CouchDB contains it's own user authentication system.",
+                    "fr": "Si cette case est cochée, CouchDB sera accessible aux personnes n’ayant pas de compte YunoHost sur votre serveur, mais CouchDB a son propre système d'autentification des utilisateurs."
                 },
                 "default": true
             },

@@ -35,7 +35,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 ynh_script_progression --message="Validating installation parameters..." --weight=1
 
-final_path=/opt/couchdb
+final_path=/opt/$app
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
 # Register (book) web path
@@ -82,7 +82,7 @@ ynh_add_nginx_config
 #=================================================
 # INSTALL COUCHDB
 #=================================================
-ynh_script_progression --message="Installing couchdb..." --weight=60
+ynh_script_progression --message="Installing CouchDB..." --weight=60
 
 COUCHDB_PASSWORD=$password
 echo "couchdb couchdb/mode select standalone
@@ -95,15 +95,14 @@ couchdb couchdb/adminpass_again password ${COUCHDB_PASSWORD}
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
 DEBIAN_FRONTEND=noninteractive # apt-get install -y --force-yes couchdb
 
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8756C4F765C9AC3CB6B85D62379CE192D401AB61
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 390EF70BB1EA12B2773962950EE62FB37A00258D 2>/dev/null
 
-ynh_install_extra_app_dependencies --repo="https://apache.bintray.com/couchdb-deb buster main" --package="couchdb"
-# ynh_install_extra_app_dependencies --repo="https://apache.bintray.com/couchdb-deb buster main" --package="couchdb" --key="https://apache.bintray.com/couchdb-deb/dists/buster/Release.gpg"
+ynh_install_extra_app_dependencies --repo="https://apache.jfrog.io/artifactory/couchdb-deb/ buster main" --package="couchdb"
 
 #=================================================
 # ADD SOME CUSTOM CONFIGURATION TO COUCH
 #=================================================
-ynh_script_progression --message="Customizing couchdb config..." --weight=2
+ynh_script_progression --message="Customizing CouchDB config..." --weight=2
 
 # customize a bit the couch config
 ynh_add_config --template="../conf/couch_ynh.ini" --destination="$final_path/etc/local.d/couch_ynh.ini"
