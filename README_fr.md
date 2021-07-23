@@ -25,7 +25,7 @@ Système de gestion de base de données orienté documents
 
 ## Configuration
 
-Vous pouvez effectuer la plupart des configurations de CouchDB à partir de fauxton, l'interface Web, accessible sur le domaine que vous avez spécifié : https://domain.tld/_utils/index.html 
+Vous pouvez effectuer la plupart des configurations de CouchDB à partir de fauxton, l'interface Web, accessible sur le domaine que vous avez spécifié : `https://domain.tld/_utils/index.html`
 
 ## Documentations et ressources
 
