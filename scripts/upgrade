@@ -25,7 +25,6 @@ password=$(ynh_app_setting_get --app=$app --key=password)
 #=================================================
 # CHECK VERSION
 #=================================================
-ynh_script_progression --message="Checking version..."
 
 upgrade_type=$(ynh_check_app_version_changed)
 
@@ -63,22 +62,26 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 # UPGRADING COUCHDB
 #=================================================
-ynh_script_progression --message="Upgrading couchdb..." --weight=60
 
-COUCHDB_PASSWORD=$password
-echo "couchdb couchdb/mode select standalone
-couchdb couchdb/mode seen true
-couchdb couchdb/bindaddress string 127.0.0.1
-couchdb couchdb/bindaddress seen true
-couchdb couchdb/adminpass password ${COUCHDB_PASSWORD}
-couchdb couchdb/adminpass seen true
-couchdb couchdb/adminpass_again password ${COUCHDB_PASSWORD}
-couchdb couchdb/adminpass_again seen true" | debconf-set-selections
-DEBIAN_FRONTEND=noninteractive # apt-get install -y --force-yes couchdb
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_script_progression --message="Upgrading CouchDB..." --weight=50
 
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 390EF70BB1EA12B2773962950EE62FB37A00258D 2>/dev/null
+	COUCHDB_PASSWORD=$password
+	echo "couchdb couchdb/mode select standalone
+	couchdb couchdb/mode seen true
+	couchdb couchdb/bindaddress string 127.0.0.1
+	couchdb couchdb/bindaddress seen true
+	couchdb couchdb/adminpass password ${COUCHDB_PASSWORD}
+	couchdb couchdb/adminpass seen true
+	couchdb couchdb/adminpass_again password ${COUCHDB_PASSWORD}
+	couchdb couchdb/adminpass_again seen true" | debconf-set-selections
+	DEBIAN_FRONTEND=noninteractive # apt-get install -y --force-yes couchdb
 
-ynh_install_extra_app_dependencies --repo="https://apache.jfrog.io/artifactory/couchdb-deb/ buster main" --package="couchdb"
+	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 390EF70BB1EA12B2773962950EE62FB37A00258D 2>/dev/null
+
+	ynh_install_extra_app_dependencies --repo="https://apache.jfrog.io/artifactory/couchdb-deb/ buster main" --package="couchdb"
+fi
 
 #=================================================
 # UPDATE A CONFIG FILE

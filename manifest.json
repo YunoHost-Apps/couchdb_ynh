@@ -3,7 +3,7 @@
     "id": "couchdb",
     "packaging_format": 1,
     "description": {
-        "en": "An open-source document-oriented NoSQL database",
+        "en": "Open-source document-oriented NoSQL database",
         "fr": "Système de gestion de base de données orienté documents"
     },
     "version": "3.1.1~ynh2",
