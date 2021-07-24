@@ -26,7 +26,6 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 # REMOVE SERVICE INTEGRATION IN YUNOHOST
 #=================================================
 
-# Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
 if ynh_exec_warn_less yunohost service status $app >/dev/null
 then
 	ynh_script_progression --message="Removing $app service integration..." --weight=2
@@ -40,14 +39,6 @@ ynh_script_progression --message="Removing dependencies..." --weight=16
 
 # Remove metapackage and its dependencies
 ynh_remove_app_dependencies
-
-#=================================================
-# REMOVE APP MAIN DIR
-#=================================================
-ynh_script_progression --message="Removing app main directory..." --weight=4
-
-# Remove the app directory securely
-ynh_secure_remove --file="$final_path"
 
 #=================================================
 # REMOVE NGINX CONFIGURATION
@@ -64,16 +55,6 @@ ynh_script_progression --message="Removing logrotate configuration..." --weight=
 
 # Remove the app-specific logrotate config
 ynh_remove_logrotate
-
-#=================================================
-# CLOSE A PORT
-#=================================================
-
-if yunohost firewall list | grep -q "\- $port$"
-then
-	ynh_script_progression --message="Closing port $port..." --weight=2
-	ynh_exec_warn_less yunohost firewall disallow TCP $port
-fi
 
 #=================================================
 # REMOVE FAIL2BAN CONFIGURATION
