@@ -38,10 +38,7 @@ port=$(ynh_app_setting_get --app=$app --key=port)
 #=================================================
 ynh_script_progression --message="Validating restoration parameters..." --weight=2
 
-ynh_webpath_available --domain=$domain --path_url=$path_url \
-	|| ynh_die --message="Path not available: ${domain}${path_url}"
-test ! -d $final_path \
-	|| ynh_die --message="There is already a directory: $final_path "
+test ! -d $final_path || ynh_die --message="There is already a directory: $final_path "
 
 #=================================================
 # STANDARD RESTORATION STEPS
@@ -80,7 +77,7 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 # REINSTALL COUCHDB
 #=================================================
-ynh_script_progression --message="Reinstalling couchdb..." --weight=40
+ynh_script_progression --message="Reinstalling Couchdb..." --weight=40
 
 COUCHDB_PASSWORD=$password
 echo "couchdb couchdb/mode select standalone
@@ -106,7 +103,7 @@ chown -R $app:$app "$final_path"
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/$app/$app.log" --needs_exposed_ports "$port"
+yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/$app/$app.log"
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION

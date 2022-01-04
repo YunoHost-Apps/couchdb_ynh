@@ -124,7 +124,7 @@ ynh_use_logrotate
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/$app/$app.log" --needs_exposed_ports "$port"
+yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/$app/$app.log"
 
 #=================================================
 # SETUP FAIL2BAN
@@ -139,16 +139,14 @@ ynh_add_fail2ban_config --logpath="/var/log/couchdb/couchdb.log" --failregex="[w
 #=================================================
 ynh_script_progression --message="Configuring permissions..." --weight=3
 
-# Setup that clicking SSO tile opens fauxton UI
-ynh_permission_url --permission="main" --url="/_utils/index.html" --add_url="/" --auth_header=false
-
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
-	# Everyone can access the app.
-	# The "main" permission is automatically created before the install script.
 	ynh_permission_update --permission="main" --add="visitors"
 fi
+
+# Setup that clicking SSO tile opens fauxton UI
+ynh_permission_url --permission="main" --url="/_utils/index.html" --add_url="/" --auth_header=false
 
 #=================================================
 # RELOAD NGINX
