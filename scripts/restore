@@ -95,7 +95,7 @@ DEBIAN_FRONTEND=noninteractive # apt-get install -y --force-yes couchdb
 
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 390EF70BB1EA12B2773962950EE62FB37A00258D 2>/dev/null
 
-ynh_install_extra_app_dependencies --repo="https://apache.jfrog.io/artifactory/couchdb-deb/ buster main" --package="couchdb"
+ynh_install_extra_app_dependencies --repo="https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" --package="couchdb"
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
