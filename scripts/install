@@ -100,17 +100,19 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 390EF70BB1EA12B27739629
 ynh_install_extra_app_dependencies --repo="https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" --package="couchdb"
 
 #=================================================
-# ADD SOME CUSTOM CONFIGURATION TO COUCH
+# ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Customizing CouchDB config..." --weight=2
+ynh_script_progression --message="Adding a configuration file..." --weight=2
 
-# customize a bit the couch config
+# Customize a bit the couch config
 ynh_add_config --template="../conf/couch_ynh.ini" --destination="$final_path/etc/local.d/couch_ynh.ini"
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:$app "$final_path"
 
+#=================================================
+# GENERIC FINALIZATION
 #=================================================
 # SETUP LOGROTATE
 #=================================================
