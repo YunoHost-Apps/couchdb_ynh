@@ -26,27 +26,12 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 # REMOVE SERVICE INTEGRATION IN YUNOHOST
 #=================================================
 
+# Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
 if ynh_exec_warn_less yunohost service status $app >/dev/null
 then
 	ynh_script_progression --message="Removing $app service integration..." --weight=2
 	yunohost service remove $app
 fi
-
-#=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Removing dependencies..." --weight=16
-
-# Remove metapackage and its dependencies
-ynh_remove_app_dependencies
-
-#=================================================
-# REMOVE NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing NGINX web server configuration..." --weight=2
-
-# Remove the dedicated NGINX config
-ynh_remove_nginx_config
 
 #=================================================
 # REMOVE LOGROTATE CONFIGURATION
@@ -57,9 +42,25 @@ ynh_script_progression --message="Removing logrotate configuration..." --weight=
 ynh_remove_logrotate
 
 #=================================================
+# REMOVE NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Removing NGINX web server configuration..." --weight=2
+
+# Remove the dedicated NGINX config
+ynh_remove_nginx_config
+
+#=================================================
+# REMOVE DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Removing dependencies..." --weight=16
+
+# Remove metapackage and its dependencies
+ynh_remove_app_dependencies
+
+#=================================================
 # REMOVE FAIL2BAN CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing Fail2ban configuration..." --weight=2
+ynh_script_progression --message="Removing Fail2Ban configuration..." --weight=2
 
 # Remove the dedicated Fail2Ban config
 ynh_remove_fail2ban_config
