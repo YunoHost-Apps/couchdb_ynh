@@ -6,13 +6,12 @@
         "en": "Open-source document-oriented NoSQL database",
         "fr": "Système de gestion de base de données orienté documents"
     },
-    "version": "3.1.1~ynh3",
+    "version": "3.2.1~ynh1",
     "url": "https://couchdb.apache.org/",
     "upstream": {
         "license": "Apache-2.0",
         "website": "https://couchdb.apache.org/",
         "admindoc": "https://docs.couchdb.org/en/stable/",
-        "userdoc": "https://yunohost.org/apps",
         "code": "https://github.com/apache/couchdb"
     },
     "license": "Apache-2.0",
@@ -22,7 +21,7 @@
         "url": "https://squeak.eauchat.org"
     },
     "requirements": {
-        "yunohost": ">= 4.2.4"
+        "yunohost": ">= 4.3.0"
     },
     "multi_instance": false,
     "services": [
