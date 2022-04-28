@@ -86,15 +86,14 @@ echo "couchdb couchdb/mode select standalone
 couchdb couchdb/mode seen true
 couchdb couchdb/bindaddress string 127.0.0.1
 couchdb couchdb/bindaddress seen true
+couchdb couchdb/cookie string ${COUCHDB_PASSWORD}
 couchdb couchdb/adminpass password ${COUCHDB_PASSWORD}
 couchdb couchdb/adminpass seen true
 couchdb couchdb/adminpass_again password ${COUCHDB_PASSWORD}
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
 DEBIAN_FRONTEND=noninteractive # apt-get install -y --force-yes couchdb
 
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 390EF70BB1EA12B2773962950EE62FB37A00258D 2>/dev/null
-
-ynh_install_extra_app_dependencies --repo="https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" --package="couchdb"
+ynh_install_extra_app_dependencies --repo="deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" --package="couchdb" --key="https://couchdb.apache.org/repo/keys.asc"
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
