@@ -1,1 +1,7 @@
-CouchDB is a database that completely embraces the web. Store your data with JSON documents. Access your documents with your web browser, via HTTP. Query, combine, and transform your documents with JavaScript. CouchDB works well with modern web and mobile apps. You can distribute your data, efficiently using CouchDB’s incremental replication. CouchDB supports master-master setups with automatic conflict detection.
+Couchdb is a database system, where entries are json objects (allowing attachments), and that you can access and synchronize via simple http requests.
+
+As explained in wikipedia:
+> Apache CouchDB is an open-source document-oriented NoSQL database, implemented in Erlang.
+
+And as described in the couchdb official website:
+> Seamless multi-master sync, that scales from Big Data to Mobile, with an Intuitive HTTP/JSON API and designed for Reliability.
