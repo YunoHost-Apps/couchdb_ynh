@@ -13,7 +13,8 @@
         "website": "https://couchdb.apache.org/",
         "admindoc": "https://docs.couchdb.org/en/stable/",
         "userdoc": "https://yunohost.org/apps",
-        "code": "https://github.com/apache/couchdb"
+        "code": "https://github.com/apache/couchdb",
+        "cpe": "cpe:2.3:a:apache:couchdb"
     },
     "license": "Apache-2.0",
     "maintainer": {
@@ -29,7 +30,7 @@
         "nginx"
     ],
     "arguments": {
-        "install" : [
+        "install": [
             {
                 "name": "domain",
                 "type": "domain"
