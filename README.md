@@ -26,6 +26,7 @@ And as described in the couchdb official website:
 
 **Shipped version:** 3.2.2~ynh1
 
+
 ## Screenshots
 
 ![Screenshot of CouchDB](./doc/screenshots/Apache_CouchDB_v2.1.1_Fauxton_Console.png)

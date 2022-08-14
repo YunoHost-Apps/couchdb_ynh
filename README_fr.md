@@ -22,7 +22,8 @@ Comme le présente wikipédia:
 > Conçu pour le Web, il fait partie de la mouvance NoSQL, et a été conçu pour pouvoir être réparti sur une grappe de serveurs.
 
 
-**Version incluse :** 3.2.2~ynh1
+**Version incluse :** 3.2.2~ynh1
+
 
 ## Captures d'écran
 
