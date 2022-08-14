@@ -6,14 +6,15 @@
         "en": "Open-source document-oriented NoSQL database",
         "fr": "Système de gestion de base de données orienté documents"
     },
-    "version": "3.1.1~ynh3",
+    "version": "3.2.2~ynh1",
     "url": "https://couchdb.apache.org/",
     "upstream": {
         "license": "Apache-2.0",
         "website": "https://couchdb.apache.org/",
         "admindoc": "https://docs.couchdb.org/en/stable/",
         "userdoc": "https://yunohost.org/apps",
-        "code": "https://github.com/apache/couchdb"
+        "code": "https://github.com/apache/couchdb",
+        "cpe": "cpe:2.3:a:apache:couchdb"
     },
     "license": "Apache-2.0",
     "maintainer": {
@@ -29,7 +30,7 @@
         "nginx"
     ],
     "arguments": {
-        "install" : [
+        "install": [
             {
                 "name": "domain",
                 "type": "domain"

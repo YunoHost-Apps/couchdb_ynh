@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # CouchDB for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/couchdb.svg)](https://dash.yunohost.org/appci/app/couchdb) ![](https://ci-apps.yunohost.org/ci/badges/couchdb.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/couchdb.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/couchdb.svg)](https://dash.yunohost.org/appci/app/couchdb) ![Working status](https://ci-apps.yunohost.org/ci/badges/couchdb.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/couchdb.maintain.svg)  
 [![Install CouchDB with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=couchdb)
 
 *[Lire ce readme en français.](./README_fr.md)*
@@ -15,15 +15,21 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-Open-source document-oriented NoSQL database
+Couchdb is a database system, where entries are json objects (allowing attachments), and that you can access and synchronize via simple http requests.
 
-**Shipped version:** 3.1.1~ynh2
+As explained in wikipedia:
+> Apache CouchDB is an open-source document-oriented NoSQL database, implemented in Erlang.
 
+And as described in the couchdb official website:
+> Seamless multi-master sync, that scales from Big Data to Mobile, with an Intuitive HTTP/JSON API and designed for Reliability.
+
+
+**Shipped version:** 3.2.2~ynh1
 
 
 ## Screenshots
 
-![](./doc/screenshots/Apache_CouchDB_v2.1.1_Fauxton_Console.png)
+![Screenshot of CouchDB](./doc/screenshots/Apache_CouchDB_v2.1.1_Fauxton_Console.png)
 
 ## Disclaimers / important information
 
@@ -33,22 +39,23 @@ You can do most configuration of CouchDB from fauxton, the web interface, access
 
 ## Documentation and resources
 
-* Official app website: https://couchdb.apache.org/
-* Official user documentation: https://yunohost.org/apps
-* Official admin documentation: https://docs.couchdb.org/en/stable/
-* Upstream app code repository: https://github.com/apache/couchdb
-* YunoHost documentation for this app: https://yunohost.org/app_couchdb
-* Report a bug: https://github.com/YunoHost-Apps/couchdb_ynh/issues
+* Official app website: <https://couchdb.apache.org/>
+* Official user documentation: <https://yunohost.org/apps>
+* Official admin documentation: <https://docs.couchdb.org/en/stable/>
+* Upstream app code repository: <https://github.com/apache/couchdb>
+* YunoHost documentation for this app: <https://yunohost.org/app_couchdb>
+* Report a bug: <https://github.com/YunoHost-Apps/couchdb_ynh/issues>
 
 ## Developer info
 
 Please send your pull request to the [testing branch](https://github.com/YunoHost-Apps/couchdb_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
-```
+
+``` bash
 sudo yunohost app install https://github.com/YunoHost-Apps/couchdb_ynh/tree/testing --debug
 or
 sudo yunohost app upgrade couchdb -u https://github.com/YunoHost-Apps/couchdb_ynh/tree/testing --debug
 ```
 
-**More info regarding app packaging:** https://yunohost.org/packaging_apps
+**More info regarding app packaging:** <https://yunohost.org/packaging_apps>
