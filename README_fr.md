@@ -22,7 +22,7 @@ Comme le présente wikipédia:
 > Conçu pour le Web, il fait partie de la mouvance NoSQL, et a été conçu pour pouvoir être réparti sur une grappe de serveurs.
 
 
-**Version incluse :** 3.2.2~ynh1
+**Version incluse :** 3.2.2~ynh2
 
 
 ## Captures d'écran
@@ -38,7 +38,6 @@ Vous pouvez effectuer la plupart des configurations de CouchDB à partir de faux
 ## Documentations et ressources
 
 * Site officiel de l'app : <https://couchdb.apache.org/>
-* Documentation officielle utilisateur : <https://yunohost.org/apps>
 * Documentation officielle de l'admin : <https://docs.couchdb.org/en/stable/>
 * Dépôt de code officiel de l'app : <https://github.com/apache/couchdb>
 * Documentation YunoHost pour cette app : <https://yunohost.org/app_couchdb>
