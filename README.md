@@ -24,7 +24,7 @@ And as described in the couchdb official website:
 > Seamless multi-master sync, that scales from Big Data to Mobile, with an Intuitive HTTP/JSON API and designed for Reliability.
 
 
-**Shipped version:** 3.2.2~ynh1
+**Shipped version:** 3.2.2~ynh2 *(:warning: This is the `testing` branch. The [`master` branch](https://github.com/YunoHost-Apps/couchdb_ynh/tree/master) used in the catalog is currently on version 3.2.2\~ynh1.)*
 
 
 ## Screenshots
@@ -40,7 +40,6 @@ You can do most configuration of CouchDB from fauxton, the web interface, access
 ## Documentation and resources
 
 * Official app website: <https://couchdb.apache.org/>
-* Official user documentation: <https://yunohost.org/apps>
 * Official admin documentation: <https://docs.couchdb.org/en/stable/>
 * Upstream app code repository: <https://github.com/apache/couchdb>
 * YunoHost documentation for this app: <https://yunohost.org/app_couchdb>
