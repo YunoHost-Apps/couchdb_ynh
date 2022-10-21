@@ -22,8 +22,7 @@ Comme le présente wikipédia:
 > Conçu pour le Web, il fait partie de la mouvance NoSQL, et a été conçu pour pouvoir être réparti sur une grappe de serveurs.
 
 
-**Version incluse :** 3.2.2~ynh2 *(:warning: Il s'agit de la branche `testing`. La [branche `master`](https://github.com/YunoHost-Apps/couchdb_ynh/tree/master) utilisée dans le catalogue est actuellement en 3.2.2\~ynh1.)*
-
+**Version incluse :** 3.2.2~ynh2
 
 ## Captures d'écran
 
