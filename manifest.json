@@ -6,7 +6,7 @@
         "en": "Open-source document-oriented NoSQL database",
         "fr": "Système de gestion de base de données orienté documents"
     },
-    "version": "3.2.2~ynh2",
+    "version": "3.3.0-RC1~ynh1",
     "url": "https://couchdb.apache.org/",
     "upstream": {
         "license": "Apache-2.0",
