@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # CouchDB for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/couchdb.svg)](https://dash.yunohost.org/appci/app/couchdb) ![Working status](https://ci-apps.yunohost.org/ci/badges/couchdb.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/couchdb.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/couchdb.svg)](https://dash.yunohost.org/appci/app/couchdb) ![Working status](https://ci-apps.yunohost.org/ci/badges/couchdb.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/couchdb.maintain.svg)
 [![Install CouchDB with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=couchdb)
 
 *[Lire ce readme en français.](./README_fr.md)*
@@ -24,8 +24,7 @@ And as described in the couchdb official website:
 > Seamless multi-master sync, that scales from Big Data to Mobile, with an Intuitive HTTP/JSON API and designed for Reliability.
 
 
-**Shipped version:** 3.2.2~ynh2 *(:warning: This is the `testing` branch. The [`master` branch](https://github.com/YunoHost-Apps/couchdb_ynh/tree/master) used in the catalog is currently on version 3.2.2\~ynh1.)*
-
+**Shipped version:** nouveau-0.1~ynh1
 
 ## Screenshots
 
