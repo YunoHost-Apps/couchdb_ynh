@@ -5,7 +5,7 @@
 #=================================================
 
 # dependencies used by the app (must be on a single line)
-pkg_dependencies="gnupg ca-certificates"
+#REMOVEME? pkg_dependencies="gnupg ca-certificates"
 
 #=================================================
 # PERSONAL HELPERS
