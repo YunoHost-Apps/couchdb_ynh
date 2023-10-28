@@ -55,6 +55,6 @@ ram.runtime = "50M"
 
     [resources.apt]
     packages = "gnupg ca-certificates"
-    extras.couchdb.repo = "deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main"
+    extras.couchdb.repo = "deb https://apache.jfrog.io/artifactory/couchdb-deb/ bullseye main"
     extras.couchdb.key = "https://couchdb.apache.org/repo/keys.asc"
     extras.couchdb.packages = "couchdb"
