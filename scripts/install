@@ -22,7 +22,7 @@ ynh_add_nginx_config
 #=================================================
 # INSTALL COUCHDB
 #=================================================
-ynh_script_progression --message="Installing CouchDB..." --weight=60
+ynh_script_progression --message="Installing $app..." --weight=60
 
 COUCHDB_PASSWORD=$password
 echo "couchdb couchdb/mode select standalone
