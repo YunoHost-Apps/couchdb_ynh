@@ -24,15 +24,15 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Installing CouchDB..." --weight=60
 
-COUCHDB_PASSWORD=$password
-echo "couchdb couchdb/mode select standalone
+echo "\
+couchdb couchdb/mode select standalone
 couchdb couchdb/mode seen true
 couchdb couchdb/bindaddress string 127.0.0.1
 couchdb couchdb/bindaddress seen true
-couchdb couchdb/cookie string ${COUCHDB_PASSWORD}
-couchdb couchdb/adminpass password ${COUCHDB_PASSWORD}
+couchdb couchdb/cookie string $password
+couchdb couchdb/adminpass password $password
 couchdb couchdb/adminpass seen true
-couchdb couchdb/adminpass_again password ${COUCHDB_PASSWORD}
+couchdb couchdb/adminpass_again password $password
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
 DEBIAN_FRONTEND=noninteractive # apt-get install -y --force-yes couchdb
 
