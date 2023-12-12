@@ -31,12 +31,6 @@ And as described in the couchdb official website:
 
 ![Screenshot of CouchDB](./doc/screenshots/Apache_CouchDB_v2.1.1_Fauxton_Console.png)
 
-## Disclaimers / important information
-
-## Configuration
-
-You can do most configuration of CouchDB from fauxton, the web interface, accessible at the domain you specified: `https://domain.tld/_utils/index.html`
-
 ## Documentation and resources
 
 * Official app website: <https://couchdb.apache.org/>
