@@ -25,7 +25,7 @@ And as described in the couchdb official website:
 > Seamless multi-master sync, that scales from Big Data to Mobile, with an Intuitive HTTP/JSON API and designed for Reliability.
 
 
-**Shipped version:** 3.3.0~ynh1
+**Shipped version:** 3.2.2~ynh2
 
 ## Screenshots
 

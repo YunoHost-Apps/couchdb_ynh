@@ -23,8 +23,9 @@ Comme le présente wikipédia:
 > Conçu pour le Web, il fait partie de la mouvance NoSQL, et a été conçu pour pouvoir être réparti sur une grappe de serveurs.
 
 
-**Version incluse :** 3.3.0~ynh1
+**Version incluse :** 3.2.2~ynh2
 
+## Captures d’écran
 
 ![Capture d’écran de CouchDB](./doc/screenshots/Apache_CouchDB_v2.1.1_Fauxton_Console.png)
 
