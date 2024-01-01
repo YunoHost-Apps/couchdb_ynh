@@ -19,7 +19,7 @@ code = "https://github.com/apache/couchdb"
 cpe = "cpe:2.3:a:apache:couchdb"
 
 [integration]
-yunohost = ">= 11.1"
+yunohost = ">= 11.2"
 architectures = "all"
 multi_instance = false
 
@@ -63,8 +63,11 @@ ram.runtime = "60M"
     [resources.apt]
     packages = ["gnupg", "ca-certificates"]
 
-    # Find a way to do that here
-    # [resources.apt.extras.couchdb]
-    # repo = "deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main"
-    # key = "https://couchdb.apache.org/repo/keys.asc"
-    # packages = ["couchdb"]
+    [resources.apt]
+    packages = "deb1, deb2, php8.0-foo, php8.0-bar"
+
+    [resources.apt]
+    packages = ""
+    extras.couchdb.repo = "deb https://apache.jfrog.io/artifactory/couchdb-deb/ bullseye main"
+    extras.couchdb.key = "https://couchdb.apache.org/repo/keys.asc"
+    extras.couchdb.packages = ["couchdb"]

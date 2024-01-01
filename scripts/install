@@ -36,18 +36,13 @@ couchdb couchdb/adminpass_again password $password
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
 DEBIAN_FRONTEND=noninteractive # apt-get install -y --force-yes couchdb
 
-ynh_install_extra_app_dependencies \
-    --repo="deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" \
-    --key="https://couchdb.apache.org/repo/keys.asc" \
-    --package="couchdb"
-
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
 ynh_script_progression --message="Adding a configuration file..." --weight=2
 
 # Customize a bit the couch config
-ynh_add_config --template="../conf/couch_ynh.ini" --destination="$install_dir/etc/local.d/couch_ynh.ini"
+ynh_add_config --template="couch_ynh.ini" --destination="$install_dir/etc/local.d/couch_ynh.ini"
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
