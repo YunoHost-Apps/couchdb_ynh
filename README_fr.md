@@ -29,6 +29,12 @@ Comme le présente wikipédia:
 
 ![Capture d’écran de CouchDB](./doc/screenshots/Apache_CouchDB_v2.1.1_Fauxton_Console.png)
 
+## Avertissements / informations importantes
+
+## Configuration
+
+Vous pouvez effectuer la plupart des configurations de CouchDB à partir de fauxton, l'interface Web, accessible sur le domaine que vous avez spécifié : `https://domain.tld/_utils/index.html`
+
 ## Documentations et ressources
 
 * Site officiel de l’app : <https://couchdb.apache.org/>

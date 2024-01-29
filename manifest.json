@@ -1,0 +1,54 @@
+{
+    "name": "CouchDB",
+    "id": "couchdb",
+    "packaging_format": 1,
+    "description": {
+        "en": "Open-source document-oriented NoSQL database",
+        "fr": "Système de gestion de base de données orienté documents"
+    },
+    "version": "3.2.2~ynh2",
+    "url": "https://couchdb.apache.org/",
+    "upstream": {
+        "license": "Apache-2.0",
+        "website": "https://couchdb.apache.org/",
+        "admindoc": "https://docs.couchdb.org/en/stable/",
+        "code": "https://github.com/apache/couchdb",
+        "cpe": "cpe:2.3:a:apache:couchdb"
+    },
+    "license": "Apache-2.0",
+    "maintainer": {
+        "name": "Squeak",
+        "email": "squeak@eauchat.org",
+        "url": "https://squeak.eauchat.org"
+    },
+    "requirements": {
+        "yunohost": ">= 11.1"
+    },
+    "multi_instance": false,
+    "services": [
+        "nginx"
+    ],
+    "arguments": {
+        "install": [
+            {
+                "name": "domain",
+                "type": "domain"
+            },
+            {
+                "name": "path",
+                "type": "path",
+                "example": "/couch",
+                "default": "/couch"
+            },
+            {
+                "name": "is_public",
+                "type": "boolean",
+                "default": true
+            },
+            {
+                "name": "password",
+                "type": "password"
+            }
+        ]
+    }
+}
