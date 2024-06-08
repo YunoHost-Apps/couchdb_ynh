@@ -19,7 +19,7 @@ code = "https://github.com/apache/couchdb"
 cpe = "cpe:2.3:a:apache:couchdb"
 
 [integration]
-yunohost = ">= 11.1"
+yunohost = ">= 11.2"
 architectures = "all"
 multi_instance = false
 
