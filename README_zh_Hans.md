@@ -3,7 +3,7 @@
 请勿手动编辑。
 -->
 
-# YunoHost 的 CouchDB
+# YunoHost 上的 CouchDB
 
 [![集成程度](https://dash.yunohost.org/integration/couchdb.svg)](https://dash.yunohost.org/appci/app/couchdb) ![工作状态](https://ci-apps.yunohost.org/ci/badges/couchdb.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/couchdb.maintain.svg)
 
