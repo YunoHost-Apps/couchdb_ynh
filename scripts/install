@@ -9,6 +9,27 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+domain=$YNH_APP_ARG_DOMAIN
+path=$YNH_APP_ARG_PATH
+password=$YNH_APP_ARG_PASSWORD
+
+app=$YNH_APP_INSTANCE_NAME
+
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
+ynh_script_progression --message="Validating installation parameters..." --weight=1
+
+install_dir=/var/www/$app
+data_dir=/home/yunohost.app/$app
+
+# Register (book) web path
+ynh_webpath_register --app=$app --domain=$domain --path=$path
+
 
 #=================================================
 # INITIALIZE AND STORE SETTINGS
@@ -16,6 +37,14 @@ source /usr/share/yunohost/helpers
 
 # Not stored by default
 ynh_app_setting_set --app=$app --key=password --value="$password"
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..." --weight=2
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$install_dir"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -28,9 +57,9 @@ ynh_add_nginx_config
 #=================================================
 # SPECIFIC SETUP
 #=================================================
-# INSTALL COUCHDB
+# CONFIGURE COUCHDB
 #=================================================
-ynh_script_progression --message="Installing CouchDB..." --weight=60
+ynh_script_progression --message="Configuring CouchDB..." --weight=60
 
 echo "\
 couchdb couchdb/mode select standalone
@@ -42,11 +71,6 @@ couchdb couchdb/adminpass password $password
 couchdb couchdb/adminpass seen true
 couchdb couchdb/adminpass_again password $password
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
-
-ynh_install_extra_app_dependencies \
-    --repo="deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" \
-    --key="https://couchdb.apache.org/repo/keys.asc" \
-    --package="couchdb"
 
 #=================================================
 # ADD A CONFIGURATION
@@ -84,7 +108,7 @@ ynh_use_logrotate
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/$app/$app.log" --needs_exposed_ports "$port"
+yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/couchdb/couchdb.log" --needs_exposed_ports "$port"
 
 #=================================================
 # SETUP FAIL2BAN

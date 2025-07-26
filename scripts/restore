@@ -47,9 +47,9 @@ ynh_script_progression --message="Restoring the NGINX web server configuration..
 ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
-# REINSTALL COUCHDB
+# RECONFIGURE COUCHDB
 #=================================================
-ynh_script_progression --message="Reinstalling couchdb..." --weight=40
+ynh_script_progression --message="Reconfiguring couchdb..." --weight=40
 
 echo "\
 couchdb couchdb/mode select standalone
@@ -61,11 +61,6 @@ couchdb couchdb/adminpass password $password
 couchdb couchdb/adminpass seen true
 couchdb couchdb/adminpass_again password $password
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
-
-ynh_install_extra_app_dependencies \
-    --repo="deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" \
-    --key="https://couchdb.apache.org/repo/keys.asc" \
-    --package="couchdb"
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
@@ -87,7 +82,7 @@ ynh_restore_file --origin_path="/etc/logrotate.d/$app"
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/$app/$app.log" --needs_exposed_ports "$port"
+yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/couchdb/couchdb.log" --needs_exposed_ports "$port"
 
 #=================================================
 # START COUCHDB SERVICE
