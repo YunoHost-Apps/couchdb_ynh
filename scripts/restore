@@ -10,6 +10,9 @@
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
+# Get the port from YunoHost resources
+port=$(ynh_app_setting_get --app=$app --key=port)
+
 #=================================================
 # STANDARD RESTORATION STEPS
 #=================================================
@@ -69,13 +72,12 @@ ynh_install_extra_app_dependencies \
     --key="https://couchdb.apache.org/repo/keys.asc" \
     --package="couchdb"
 
+# Permissions will be handled by CouchDB package, just ensure basic security
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
-chown -R couchdb:couchdb "$install_dir"
 
 chmod 750 "$data_dir"
 chmod -R o-rwx "$data_dir"
-chown -R couchdb:couchdb "$data_dir"
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION

@@ -19,16 +19,16 @@ password=$YNH_APP_ARG_PASSWORD
 
 app=$YNH_APP_INSTANCE_NAME
 
+# Get the port from YunoHost resources
+port=$(ynh_app_setting_get --app=$app --key=port)
+
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
 ynh_script_progression --message="Validating installation parameters..." --weight=1
 
-install_dir=/var/www/$app
-data_dir=/home/yunohost.app/$app
-
-# Register (book) web path
-ynh_webpath_register --app=$app --domain=$domain --path=$path
+# These will be handled by YunoHost resources in v2
+# install_dir and data_dir are automatically set by the manifest
 
 
 #=================================================
@@ -37,14 +37,6 @@ ynh_webpath_register --app=$app --domain=$domain --path=$path
 
 # Not stored by default
 ynh_app_setting_set --app=$app --key=password --value="$password"
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..." --weight=2
-
-# Create a system user
-ynh_system_user_create --username=$app --home_dir="$install_dir"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -90,9 +82,9 @@ ynh_script_progression --message="Adding a configuration file..." --weight=2
 # Customize a bit the couch config
 ynh_add_config --template="../conf/couch_ynh.ini" --destination="/opt/couchdb/etc/local.d/couch_ynh.ini"
 
-chmod 750 "/opt/couchdb"
-chmod -R o-rwx "/opt/couchdb"
-chown -R couchdb:couchdb "/opt/couchdb"
+# The permissions will be handled by CouchDB package installation
+# Just ensure the config file has correct permissions
+chmod 644 "/opt/couchdb/etc/local.d/couch_ynh.ini"
 
 #=================================================
 # START COUCHDB SERVICE

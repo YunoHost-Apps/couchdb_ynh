@@ -9,6 +9,9 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
+# Get the port from YunoHost resources
+port=$(ynh_app_setting_get --app=$app --key=port)
+
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
@@ -60,9 +63,9 @@ ynh_script_progression --message="Updating a configuration file..." --weight=1
 
 ynh_add_config --template="../conf/couch_ynh.ini" --destination="/opt/couchdb/etc/local.d/couch_ynh.ini"
 
-chmod 750 "/opt/couchdb"
-chmod -R o-rwx "/opt/couchdb"
-chown -R couchdb:couchdb "/opt/couchdb"
+# The permissions will be handled by CouchDB package installation
+# Just ensure the config file has correct permissions  
+chmod 644 "/opt/couchdb/etc/local.d/couch_ynh.ini"
 
 #=================================================
 # RESTART COUCHDB SERVICE
