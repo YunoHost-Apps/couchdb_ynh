@@ -110,7 +110,7 @@ ynh_script_progression --message="Checking CouchDB system databases..." --weight
 max_attempts=30
 attempt=0
 while [ $attempt -lt $max_attempts ]; do
-    if curl -s -f "http://127.0.0.1:$port/" >/dev/null 2>&1; then
+    if curl -s -f --user "admin:$password" "http://127.0.0.1:$port/" >/dev/null 2>&1; then
         break
     fi
     ynh_print_info --message="Waiting for CouchDB to start... (attempt $((attempt + 1))/$max_attempts)"
@@ -123,21 +123,21 @@ if [ $attempt -eq $max_attempts ]; then
 else
     # Check if system databases exist, create if missing (they might not be in backup)
     for db in _users _replicator _global_changes; do
-        if ! curl -s -f "http://admin:$password@127.0.0.1:$port/$db" >/dev/null 2>&1; then
+        if ! curl -s -f --user "admin:$password" "http://127.0.0.1:$port/$db" >/dev/null 2>&1; then
             ynh_print_info --message="Creating missing system database: $db"
-            curl -X PUT "http://admin:$password@127.0.0.1:$port/$db" -H "Content-Type: application/json" >/dev/null 2>&1 || ynh_print_warn --message="Failed to create $db database"
+            curl -X PUT --user "admin:$password" "http://127.0.0.1:$port/$db" -H "Content-Type: application/json" >/dev/null 2>&1 || ynh_print_warn --message="Failed to create $db database"
         fi
     done
-    
+
     # Verify databases exist
     sleep 2
     missing_dbs=""
     for db in _users _replicator _global_changes; do
-        if ! curl -s "http://admin:$password@127.0.0.1:$port/$db" | grep -q "\"db_name\":\"$db\""; then
+        if ! curl -s --user "admin:$password" "http://127.0.0.1:$port/$db" | grep -q "\"db_name\":\"$db\""; then
             missing_dbs="$missing_dbs $db"
         fi
     done
-    
+
     if [ -z "$missing_dbs" ]; then
         ynh_print_info --message="✅ All CouchDB system databases are present"
     else
