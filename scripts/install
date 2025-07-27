@@ -96,6 +96,69 @@ ynh_systemd_action --service_name=couchdb --action="enable"
 ynh_systemd_action --service_name=couchdb --action="start" --log_path="/var/log/couchdb/couchdb.log"
 
 #=================================================
+# INITIALIZE COUCHDB SYSTEM DATABASES
+#=================================================
+ynh_script_progression --message="Initializing CouchDB system databases..." --weight=3
+
+# Wait for CouchDB to be fully started
+max_attempts=30
+attempt=0
+while [ $attempt -lt $max_attempts ]; do
+    if curl -s -f "http://127.0.0.1:$port/" >/dev/null 2>&1; then
+        break
+    fi
+    ynh_print_info --message="Waiting for CouchDB to start... (attempt $((attempt + 1))/$max_attempts)"
+    sleep 2
+    attempt=$((attempt + 1))
+done
+
+if [ $attempt -eq $max_attempts ]; then
+    ynh_die --message="CouchDB failed to start within expected time"
+fi
+
+# Create system databases that CouchDB requires
+ynh_print_info --message="Creating CouchDB system databases..."
+
+# Create _users database
+if ! curl -s -f "http://admin:$password@127.0.0.1:$port/_users" >/dev/null 2>&1; then
+    ynh_print_info --message="Creating _users database..."
+    curl -X PUT "http://admin:$password@127.0.0.1:$port/_users" -H "Content-Type: application/json" >/dev/null 2>&1 || ynh_print_warn --message="Failed to create _users database"
+else
+    ynh_print_info --message="_users database already exists"
+fi
+
+# Create _replicator database
+if ! curl -s -f "http://admin:$password@127.0.0.1:$port/_replicator" >/dev/null 2>&1; then
+    ynh_print_info --message="Creating _replicator database..."
+    curl -X PUT "http://admin:$password@127.0.0.1:$port/_replicator" -H "Content-Type: application/json" >/dev/null 2>&1 || ynh_print_warn --message="Failed to create _replicator database"
+else
+    ynh_print_info --message="_replicator database already exists"
+fi
+
+# Create _global_changes database
+if ! curl -s -f "http://admin:$password@127.0.0.1:$port/_global_changes" >/dev/null 2>&1; then
+    ynh_print_info --message="Creating _global_changes database..."
+    curl -X PUT "http://admin:$password@127.0.0.1:$port/_global_changes" -H "Content-Type: application/json" >/dev/null 2>&1 || ynh_print_warn --message="Failed to create _global_changes database"
+else
+    ynh_print_info --message="_global_changes database already exists"
+fi
+
+# Verify databases were created successfully
+sleep 2
+created_count=0
+for db in _users _replicator _global_changes; do
+    if curl -s "http://admin:$password@127.0.0.1:$port/$db" | grep -q "\"db_name\":\"$db\""; then
+        created_count=$((created_count + 1))
+    fi
+done
+
+if [ $created_count -eq 3 ]; then
+    ynh_print_info --message="✅ All CouchDB system databases initialized successfully"
+else
+    ynh_print_warn --message="⚠️  Only $created_count/3 system databases were created successfully"
+fi
+
+#=================================================
 # GENERIC FINALIZATION
 #=================================================
 # SETUP LOGROTATE

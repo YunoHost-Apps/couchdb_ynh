@@ -102,6 +102,50 @@ ynh_script_progression --message="Starting CouchDB service..." --weight=1
 ynh_systemd_action --service_name=couchdb --action="start" --log_path="/var/log/couchdb/couchdb.log"
 
 #=================================================
+# INITIALIZE COUCHDB SYSTEM DATABASES IF NEEDED
+#=================================================
+ynh_script_progression --message="Checking CouchDB system databases..." --weight=2
+
+# Wait for CouchDB to be fully started
+max_attempts=30
+attempt=0
+while [ $attempt -lt $max_attempts ]; do
+    if curl -s -f "http://127.0.0.1:$port/" >/dev/null 2>&1; then
+        break
+    fi
+    ynh_print_info --message="Waiting for CouchDB to start... (attempt $((attempt + 1))/$max_attempts)"
+    sleep 2
+    attempt=$((attempt + 1))
+done
+
+if [ $attempt -eq $max_attempts ]; then
+    ynh_print_warn --message="CouchDB did not start within expected time, skipping database check"
+else
+    # Check if system databases exist, create if missing (they might not be in backup)
+    for db in _users _replicator _global_changes; do
+        if ! curl -s -f "http://admin:$password@127.0.0.1:$port/$db" >/dev/null 2>&1; then
+            ynh_print_info --message="Creating missing system database: $db"
+            curl -X PUT "http://admin:$password@127.0.0.1:$port/$db" -H "Content-Type: application/json" >/dev/null 2>&1 || ynh_print_warn --message="Failed to create $db database"
+        fi
+    done
+    
+    # Verify databases exist
+    sleep 2
+    missing_dbs=""
+    for db in _users _replicator _global_changes; do
+        if ! curl -s "http://admin:$password@127.0.0.1:$port/$db" | grep -q "\"db_name\":\"$db\""; then
+            missing_dbs="$missing_dbs $db"
+        fi
+    done
+    
+    if [ -z "$missing_dbs" ]; then
+        ynh_print_info --message="✅ All CouchDB system databases are present"
+    else
+        ynh_print_warn --message="⚠️  Missing system databases:$missing_dbs"
+    fi
+fi
+
+#=================================================
 # GENERIC FINALIZATION
 #=================================================
 # RELOAD NGINX
