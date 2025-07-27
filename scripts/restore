@@ -47,10 +47,11 @@ ynh_script_progression --message="Restoring the NGINX web server configuration..
 ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
-# RECONFIGURE COUCHDB
+# REINSTALL COUCHDB
 #=================================================
-ynh_script_progression --message="Reconfiguring couchdb..." --weight=40
+ynh_script_progression --message="Reinstalling CouchDB..." --weight=40
 
+# Preseed debconf before reinstallation
 echo "\
 couchdb couchdb/mode select standalone
 couchdb couchdb/mode seen true
@@ -62,13 +63,19 @@ couchdb couchdb/adminpass seen true
 couchdb couchdb/adminpass_again password $password
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
 
+# Install CouchDB from external repository
+ynh_install_extra_app_dependencies \
+    --repo="deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" \
+    --key="https://couchdb.apache.org/repo/keys.asc" \
+    --package="couchdb"
+
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
-chown -R $app:$app "$install_dir"
+chown -R couchdb:couchdb "$install_dir"
 
 chmod 750 "$data_dir"
 chmod -R o-rwx "$data_dir"
-chown -R $app:www-data "$data_dir"
+chown -R couchdb:couchdb "$data_dir"
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION

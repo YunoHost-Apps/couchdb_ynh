@@ -57,10 +57,11 @@ ynh_add_nginx_config
 #=================================================
 # SPECIFIC SETUP
 #=================================================
-# CONFIGURE COUCHDB
+# CONFIGURE AND INSTALL COUCHDB
 #=================================================
-ynh_script_progression --message="Configuring CouchDB..." --weight=60
+ynh_script_progression --message="Installing and configuring CouchDB..." --weight=60
 
+# Preseed debconf before installation to avoid interactive prompts
 echo "\
 couchdb couchdb/mode select standalone
 couchdb couchdb/mode seen true
@@ -72,17 +73,26 @@ couchdb couchdb/adminpass seen true
 couchdb couchdb/adminpass_again password $password
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
 
+# Install CouchDB from external repository
+ynh_install_extra_app_dependencies \
+    --repo="deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" \
+    --key="https://couchdb.apache.org/repo/keys.asc" \
+    --package="couchdb"
+
+# Ensure CouchDB service is stopped before configuration
+ynh_systemd_action --service_name=couchdb --action="stop" || true
+
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
 ynh_script_progression --message="Adding a configuration file..." --weight=2
 
 # Customize a bit the couch config
-ynh_add_config --template="../conf/couch_ynh.ini" --destination="$install_dir/etc/local.d/couch_ynh.ini"
+ynh_add_config --template="../conf/couch_ynh.ini" --destination="/opt/couchdb/etc/local.d/couch_ynh.ini"
 
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-chown -R "$app:$app" "$install_dir"
+chmod 750 "/opt/couchdb"
+chmod -R o-rwx "/opt/couchdb"
+chown -R couchdb:couchdb "/opt/couchdb"
 
 #=================================================
 # START COUCHDB SERVICE
