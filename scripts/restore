@@ -10,9 +10,6 @@
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
-# Get the port from YunoHost resources
-port=$(ynh_app_setting_get --app=$app --key=port)
-
 #=================================================
 # STANDARD RESTORATION STEPS
 #=================================================
@@ -52,9 +49,8 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 # REINSTALL COUCHDB
 #=================================================
-ynh_script_progression --message="Reinstalling CouchDB..." --weight=40
+ynh_script_progression --message="Reinstalling couchdb..." --weight=40
 
-# Preseed debconf before reinstallation
 echo "\
 couchdb couchdb/mode select standalone
 couchdb couchdb/mode seen true
@@ -66,18 +62,15 @@ couchdb couchdb/adminpass seen true
 couchdb couchdb/adminpass_again password $password
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
 
-# Install CouchDB from external repository
 ynh_install_extra_app_dependencies \
     --repo="deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" \
     --key="https://couchdb.apache.org/repo/keys.asc" \
     --package="couchdb"
 
-# Permissions will be handled by CouchDB package, just ensure basic security
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-
+# Permissions will be handled by CouchDB package, just ensure basic security for data
 chmod 750 "$data_dir"
 chmod -R o-rwx "$data_dir"
+chown -R $app:www-data "$data_dir"
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
@@ -100,50 +93,6 @@ ynh_script_progression --message="Starting CouchDB service..." --weight=1
 
 # Start CouchDB service
 ynh_systemd_action --service_name=couchdb --action="start" --log_path="/var/log/couchdb/couchdb.log"
-
-#=================================================
-# INITIALIZE COUCHDB SYSTEM DATABASES IF NEEDED
-#=================================================
-ynh_script_progression --message="Checking CouchDB system databases..." --weight=2
-
-# Wait for CouchDB to be fully started
-max_attempts=30
-attempt=0
-while [ $attempt -lt $max_attempts ]; do
-    if curl -s -f --user "admin:$password" "http://127.0.0.1:$port/" >/dev/null 2>&1; then
-        break
-    fi
-    ynh_print_info --message="Waiting for CouchDB to start... (attempt $((attempt + 1))/$max_attempts)"
-    sleep 2
-    attempt=$((attempt + 1))
-done
-
-if [ $attempt -eq $max_attempts ]; then
-    ynh_print_warn --message="CouchDB did not start within expected time, skipping database check"
-else
-    # Check if system databases exist, create if missing (they might not be in backup)
-    for db in _users _replicator _global_changes; do
-        if ! curl -s -f --user "admin:$password" "http://127.0.0.1:$port/$db" >/dev/null 2>&1; then
-            ynh_print_info --message="Creating missing system database: $db"
-            curl -X PUT --user "admin:$password" "http://127.0.0.1:$port/$db" -H "Content-Type: application/json" >/dev/null 2>&1 || ynh_print_warn --message="Failed to create $db database"
-        fi
-    done
-
-    # Verify databases exist
-    sleep 2
-    missing_dbs=""
-    for db in _users _replicator _global_changes; do
-        if ! curl -s --user "admin:$password" "http://127.0.0.1:$port/$db" | grep -q "\"db_name\":\"$db\""; then
-            missing_dbs="$missing_dbs $db"
-        fi
-    done
-
-    if [ -z "$missing_dbs" ]; then
-        ynh_print_info --message="✅ All CouchDB system databases are present"
-    else
-        ynh_print_warn --message="⚠️  Missing system databases:$missing_dbs"
-    fi
-fi
 
 #=================================================
 # GENERIC FINALIZATION
