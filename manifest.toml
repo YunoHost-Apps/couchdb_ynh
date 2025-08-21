@@ -56,15 +56,12 @@ ram.runtime = "60M"
 
     [resources.permissions]
     main.url = "/"
+    main.auth_header = false
+    main.show_tile = false
+    main.protected = false
 
     [resources.ports]
     main.default = 5984
 
     [resources.apt]
     packages = ["gnupg", "ca-certificates"]
-
-    # Find a way to do that here
-    # [resources.apt.extras.couchdb]
-    # repo = "deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main"
-    # key = "https://couchdb.apache.org/repo/keys.asc"
-    # packages = ["couchdb"]

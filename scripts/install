@@ -9,6 +9,27 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+domain=$YNH_APP_ARG_DOMAIN
+path=$YNH_APP_ARG_PATH
+password=$YNH_APP_ARG_PASSWORD
+
+app=$YNH_APP_INSTANCE_NAME
+
+# Get the port from YunoHost resources
+port=$(ynh_app_setting_get --app=$app --key=port)
+
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
+ynh_script_progression --message="Validating installation parameters..." --weight=1
+
+# These will be handled by YunoHost resources in v2
+# install_dir and data_dir are automatically set by the manifest
+
 
 #=================================================
 # INITIALIZE AND STORE SETTINGS
@@ -28,10 +49,11 @@ ynh_add_nginx_config
 #=================================================
 # SPECIFIC SETUP
 #=================================================
-# INSTALL COUCHDB
+# CONFIGURE AND INSTALL COUCHDB
 #=================================================
-ynh_script_progression --message="Installing CouchDB..." --weight=60
+ynh_script_progression --message="Installing and configuring CouchDB..." --weight=60
 
+# Preseed debconf before installation to avoid interactive prompts
 echo "\
 couchdb couchdb/mode select standalone
 couchdb couchdb/mode seen true
@@ -42,12 +64,15 @@ couchdb couchdb/adminpass password $password
 couchdb couchdb/adminpass seen true
 couchdb couchdb/adminpass_again password $password
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
-DEBIAN_FRONTEND=noninteractive # apt-get install -y --force-yes couchdb
 
+# Install CouchDB from external repository
 ynh_install_extra_app_dependencies \
     --repo="deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" \
     --key="https://couchdb.apache.org/repo/keys.asc" \
     --package="couchdb"
+
+# Ensure CouchDB service is stopped before configuration
+ynh_systemd_action --service_name=couchdb --action="stop" || true
 
 #=================================================
 # ADD A CONFIGURATION
@@ -55,11 +80,83 @@ ynh_install_extra_app_dependencies \
 ynh_script_progression --message="Adding a configuration file..." --weight=2
 
 # Customize a bit the couch config
-ynh_add_config --template="../conf/couch_ynh.ini" --destination="$install_dir/etc/local.d/couch_ynh.ini"
+ynh_add_config --template="../conf/couch_ynh.ini" --destination="/opt/couchdb/etc/local.d/couch_ynh.ini"
 
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-chown -R "$app:$app" "$install_dir"
+# The permissions will be handled by CouchDB package installation
+# Just ensure the config file has correct permissions
+chmod 644 "/opt/couchdb/etc/local.d/couch_ynh.ini"
+
+#=================================================
+# START COUCHDB SERVICE
+#=================================================
+ynh_script_progression --message="Starting CouchDB service..." --weight=1
+
+# Start and enable CouchDB service
+ynh_systemd_action --service_name=couchdb --action="enable"
+ynh_systemd_action --service_name=couchdb --action="start" --log_path="/var/log/couchdb/couchdb.log"
+
+#=================================================
+# INITIALIZE COUCHDB SYSTEM DATABASES
+#=================================================
+ynh_script_progression --message="Initializing CouchDB system databases..." --weight=3
+
+# Wait for CouchDB to be fully started
+max_attempts=30
+attempt=0
+while [ $attempt -lt $max_attempts ]; do
+    if curl -s -f --user "admin:$password" "http://127.0.0.1:$port/" >/dev/null 2>&1; then
+        break
+    fi
+    ynh_print_info --message="Waiting for CouchDB to start... (attempt $((attempt + 1))/$max_attempts)"
+    sleep 2
+    attempt=$((attempt + 1))
+done
+
+if [ $attempt -eq $max_attempts ]; then
+    ynh_die --message="CouchDB failed to start within expected time"
+fi
+
+# Create system databases that CouchDB requires
+ynh_print_info --message="Creating CouchDB system databases..."
+
+# Create _users database
+if ! curl -s -f --user "admin:$password" "http://127.0.0.1:$port/_users" >/dev/null 2>&1; then
+    ynh_print_info --message="Creating _users database..."
+    curl -X PUT --user "admin:$password" "http://127.0.0.1:$port/_users" -H "Content-Type: application/json" >/dev/null 2>&1 || ynh_print_warn --message="Failed to create _users database"
+else
+    ynh_print_info --message="_users database already exists"
+fi
+
+# Create _replicator database
+if ! curl -s -f --user "admin:$password" "http://127.0.0.1:$port/_replicator" >/dev/null 2>&1; then
+    ynh_print_info --message="Creating _replicator database..."
+    curl -X PUT --user "admin:$password" "http://127.0.0.1:$port/_replicator" -H "Content-Type: application/json" >/dev/null 2>&1 || ynh_print_warn --message="Failed to create _replicator database"
+else
+    ynh_print_info --message="_replicator database already exists"
+fi
+
+# Create _global_changes database
+if ! curl -s -f --user "admin:$password" "http://127.0.0.1:$port/_global_changes" >/dev/null 2>&1; then
+    ynh_print_info --message="Creating _global_changes database..."
+    curl -X PUT --user "admin:$password" "http://127.0.0.1:$port/_global_changes" -H "Content-Type: application/json" >/dev/null 2>&1 || ynh_print_warn --message="Failed to create _global_changes database"
+else
+    ynh_print_info --message="_global_changes database already exists"
+fi
+
+# Verify databases were created successfully
+sleep 2
+created_count=0
+for db in _users _replicator _global_changes; do
+    if curl -s --user "admin:$password" "http://127.0.0.1:$port/$db" | grep -q "\"db_name\":\"$db\""; then
+        created_count=$((created_count + 1))
+    fi
+done
+
+if [ $created_count -eq 3 ]; then
+    ynh_print_info --message="✅ All CouchDB system databases initialized successfully"
+else
+    ynh_print_warn --message="⚠️  Only $created_count/3 system databases were created successfully"
+fi
 
 #=================================================
 # GENERIC FINALIZATION
@@ -76,7 +173,7 @@ ynh_use_logrotate
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/$app/$app.log" --needs_exposed_ports "$port"
+yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/couchdb/couchdb.log" --needs_exposed_ports "$port"
 
 #=================================================
 # SETUP FAIL2BAN
@@ -91,3 +188,23 @@ ynh_add_fail2ban_config --logpath="/var/log/couchdb/couchdb.log" --failregex="[w
 #=================================================
 
 ynh_script_progression --message="Installation of $app completed" --last
+
+# Handle root path display
+if [[ "$path" == "/" ]]; then
+    admin_url="https://$domain/_utils/"
+    api_url="https://$domain/"
+else
+    admin_url="https://$domain$path/_utils/"
+    api_url="https://$domain$path/"
+fi
+
+ynh_print_info --message="🎉 CouchDB has been successfully installed!"
+ynh_print_info --message=""
+ynh_print_info --message="📍 Access your CouchDB instance:"
+ynh_print_info --message="   • Admin interface: $admin_url"
+ynh_print_info --message="   • API endpoint: $api_url"
+ynh_print_info --message=""
+ynh_print_info --message="🔧 For Obsidian LiveSync setup:"
+ynh_print_info --message="   • Check the app documentation in YunoHost admin panel"
+ynh_print_info --message=""
+ynh_print_info --message="🔑 Use your admin credentials to access CouchDB"
