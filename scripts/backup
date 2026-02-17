@@ -1,6 +1,11 @@
 #!/bin/bash
 
-source ../settings/scripts/_common.sh
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
 source /usr/share/yunohost/helpers
 
 ynh_print_info "Declaring files to be backed up..."
