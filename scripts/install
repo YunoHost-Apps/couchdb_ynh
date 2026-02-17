@@ -6,31 +6,18 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-
 source /usr/share/yunohost/helpers
-
 
 #=================================================
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 
-# Not stored by default
-ynh_app_setting_set --app=$app --key=password --value="$password"
+ynh_app_setting_set --key=password --value="$password"
 
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Configuring NGINX web server..." --weight=3
-
-# Create a dedicated NGINX config
-ynh_add_nginx_config
-
-#=================================================
-# SPECIFIC SETUP
 #=================================================
 # INSTALL COUCHDB
 #=================================================
-ynh_script_progression --message="Installing CouchDB..." --weight=60
+ynh_script_progression "Installing CouchDB..."
 
 echo "\
 couchdb couchdb/mode select standalone
@@ -44,7 +31,7 @@ couchdb couchdb/adminpass_again password $password
 couchdb couchdb/adminpass_again seen true" | debconf-set-selections
 DEBIAN_FRONTEND=noninteractive # apt-get install -y --force-yes couchdb
 
-ynh_install_extra_app_dependencies \
+ynh_apt_install_dependencies_from_extra_repository \
     --repo="deb https://apache.jfrog.io/artifactory/couchdb-deb/ $(lsb_release -c -s) main" \
     --key="https://couchdb.apache.org/repo/keys.asc" \
     --package="couchdb"
@@ -52,42 +39,29 @@ ynh_install_extra_app_dependencies \
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding a configuration file..." --weight=2
+ynh_script_progression "Adding $app's configuration..."
 
-# Customize a bit the couch config
-ynh_add_config --template="../conf/couch_ynh.ini" --destination="$install_dir/etc/local.d/couch_ynh.ini"
+ynh_config_add --template="couch_ynh.ini" --destination="$install_dir/etc/local.d/couch_ynh.ini"
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R "$app:$app" "$install_dir"
 
 #=================================================
-# GENERIC FINALIZATION
-#=================================================
 # SETUP LOGROTATE
 #=================================================
-ynh_script_progression --message="Configuring log rotation..." --weight=2
+ynh_script_progression "Configuring log rotation..."
 
-# Use logrotate to manage application logfile(s)
-ynh_use_logrotate
+ynh_config_add_nginx
 
-#=================================================
-# INTEGRATE SERVICE IN YUNOHOST
-#=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
+ynh_config_add_logrotate
 
 yunohost service add $app --description="Open-source document-oriented NoSQL database" --log="/var/log/$app/$app.log" --needs_exposed_ports "$port"
 
-#=================================================
-# SETUP FAIL2BAN
-#=================================================
-ynh_script_progression --message="Configuring Fail2Ban..." --weight=3
-
-# Create a dedicated Fail2Ban config
-ynh_add_fail2ban_config --logpath="/var/log/couchdb/couchdb.log" --failregex="[warning] .*couch_httpd_auth: Authentication failed for user .+ from <HOST>" --max_retry=5
+ynh_config_add_fail2ban --logpath="/var/log/couchdb/couchdb.log" --failregex="[warning] .*couch_httpd_auth: Authentication failed for user .+ from <HOST>"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --last
+ynh_script_progression "Installation of $app completed"
